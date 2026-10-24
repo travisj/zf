@@ -221,7 +221,7 @@ class Zend_Db_Statement_Pdo extends Zend_Db_Statement implements IteratorAggrega
      * @return bool
      * @throws Zend_Db_Statement_Exception
      */
-    public function _execute(array $params = null)
+    public function _execute(?array $params = null)
     {
         try {
             if ($params !== null) {
@@ -250,7 +250,10 @@ class Zend_Db_Statement_Pdo extends Zend_Db_Statement implements IteratorAggrega
             $style = $this->_fetchMode;
         }
         try {
-            return $this->_stmt->fetch($style, $cursor, $offset);
+            if ($cursor === null && $offset === null) {
+            return $this->_stmt->fetch($style);
+        }
+        return $this->_stmt->fetch($style, $cursor, $offset);
         } catch (PDOException $e) {
             require_once 'Zend/Db/Statement/Exception.php';
             throw new Zend_Db_Statement_Exception($e->getMessage(), $e->getCode(), $e);
